@@ -14,7 +14,7 @@ from dagshub.data_engine import datasources
 
 @st.cache_data
 def load_latest_dataset():
-    get_token(st.secrets["TOKEN"])
+    get_token(token=st.secrets["TOKEN"])
     source = datasources.get_datasources(
         'kynnemall/Dublin-property-prices'
     )[-1]
