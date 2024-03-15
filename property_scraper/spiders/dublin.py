@@ -114,8 +114,9 @@ class DublinSpider(scrapy.Spider):
         os.remove("data/data.csv")
 
         # back up the new data to Dagshub
-        with open("token.txt" "r") as f:
-            token = f.read()
+        with open("token.txt", "r") as f:
+            token = f.read().replace('\n', '')
         repo = Repo("kynnemall", "Dublin-property-prices", token=token)
         repo.upload(local_path=savename, remote_path=savename,
-                    commit_message=f"Dataset acquired on {today}")
+                    commit_message=f"Dataset acquired on {today}",
+                    versioning="dvc")
