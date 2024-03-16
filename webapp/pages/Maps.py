@@ -15,6 +15,7 @@ from matplotlib import colors, cm
 
 st.write(f'Current directory: {os.getcwd()}')
 st.write(f'Files: {os.listdir()}')
+st.write(f'webapp files: {os.listdir("webapp")}')
 
 @st.cache_data
 def prepare_mapdata():
