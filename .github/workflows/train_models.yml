@@ -24,4 +24,4 @@ jobs:
     - name: Run train_models.py
       env:
         TOKEN: ${{ secrets.TOKEN }} 
-      run: python train_models.py
+      run: python train_model.py
