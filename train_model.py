@@ -6,7 +6,7 @@ Created on Fri Mar  8 16:11:17 2024
 @author: martin
 """
 
-import glob
+import os
 import mlflow
 import dagshub
 import pandas as pd
@@ -40,9 +40,15 @@ def prepare_data():
 
     """
 
-    # load all csv files and drop non-unique rows
-    csvs = glob.glob("data/*.csv")
-    df = pd.concat([pd.read_csv(c) for c in csvs])
+    # load all datasets
+    dagshub.auth.add_app_token(token=os.environ["TOKEN"])
+    source = dagshub.data_engine.datasources.get_datasources(
+        'kynnemall/Dublin-property-prices'
+    )[-1]
+    dags_df = source.all().dataframe
+    csvs_df = dags_df[dags_df["path"].str.endswith("properties.csv")]
+    csv_links = csvs_df["dagshub_download_url"].values
+    df = pd.concat([pd.read_csv(c) for c in csv_links])
     df.drop_duplicates(subset='url', keep='last', inplace=True)
 
     # keep properties with postcodes that are present at least 10 times
