@@ -9,6 +9,7 @@ Created on Fri Mar  8 16:11:17 2024
 import os
 import mlflow
 import dagshub
+import logging
 import pandas as pd
 from sklearn import metrics
 from sklearn import set_config
@@ -21,6 +22,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from dagshub.data_engine import datasources
 set_config(transform_output="pandas")
+logging.getLogger("mlflow").setLevel(logging.DEBUG)
 
 
 def prepare_data():
