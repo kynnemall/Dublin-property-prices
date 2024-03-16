@@ -6,12 +6,15 @@ Created on Fri Mar 15 10:50:08 2024
 @author: martin
 """
 
+import os
 import numpy as np
 import pydeck as pdk
 import pandas as pd
 import streamlit as st
 from matplotlib import colors, cm
 
+st.write(f'Current directory: {os.getcwd()}')
+st.write(f'Files: {os.listdir()}')
 
 @st.cache_data
 def prepare_mapdata():
