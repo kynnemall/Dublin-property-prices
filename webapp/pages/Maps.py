@@ -13,13 +13,10 @@ import pandas as pd
 import streamlit as st
 from matplotlib import colors, cm
 
-st.write(f'Current directory: {os.getcwd()}')
-st.write(f'Files: {os.listdir()}')
-st.write(f'webapp files: {os.listdir("webapp")}')
 
 @st.cache_data
 def prepare_mapdata():
-    gdf = pd.read_csv('geodata.csv')
+    gdf = pd.read_csv('webapp/geodata.csv')
     df = st.session_state["listings"]
     g = df.groupby('postcode')['price'].median()
 
