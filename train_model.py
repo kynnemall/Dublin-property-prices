@@ -41,6 +41,7 @@ def prepare_data():
     """
 
     # load all datasets
+    print(os.environ.keys())
     dagshub.auth.add_app_token(token=os.environ["TOKEN"])
     source = dagshub.data_engine.datasources.get_datasources(
         'kynnemall/Dublin-property-prices'
