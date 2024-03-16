@@ -8,13 +8,13 @@ Created on Fri Mar  8 16:23:44 2024
 
 import pandas as pd
 import streamlit as st
-from dagshub.auth import get_token
+from dagshub.auth import add_app_token
 from dagshub.data_engine import datasources
 
 
 @st.cache_data
 def load_latest_dataset():
-    get_token(token=st.secrets["TOKEN"])
+    add_app_token(token=st.secrets["TOKEN"])
     source = datasources.get_datasources(
         'kynnemall/Dublin-property-prices'
     )[-1]
