@@ -23,5 +23,7 @@ jobs:
 
     - name: Run train_models.py
       env:
-        TOKEN: ${{ secrets.TOKEN }} 
+        TOKEN: ${{ secrets.TOKEN }}
+        MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
+        MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
       run: python train_model.py
