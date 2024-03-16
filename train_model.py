@@ -41,8 +41,6 @@ def prepare_data():
     """
 
     # load all datasets
-    print(os.environ.keys())
-    dagshub.auth.add_app_token(token=os.environ["TOKEN"])
     source = dagshub.data_engine.datasources.get_datasources(
         'kynnemall/Dublin-property-prices'
     )[-1]
@@ -75,6 +73,10 @@ def prepare_data():
 
 # %%
 if __name__ == "__main__":
+    print('Preparing to print keys')
+    print(os.environ.keys())
+    print('No longer printing keys')
+    dagshub.auth.add_app_token(token=os.environ["TOKEN"])
     dagshub.init(repo_name="Dublin-property-prices", repo_owner="kynnemall",
                  mlflow=True)
     mlflow.set_tracking_uri(
