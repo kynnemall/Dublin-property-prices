@@ -19,6 +19,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from dagshub.data_engine import datasources
 set_config(transform_output="pandas")
 
 
@@ -41,7 +42,7 @@ def prepare_data():
     """
 
     # load all datasets
-    source = dagshub.data_engine.datasources.get_datasources(
+    source = datasources.get_datasources(
         'kynnemall/Dublin-property-prices'
     )[-1]
     dags_df = source.all().dataframe
