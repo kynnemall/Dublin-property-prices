@@ -83,6 +83,9 @@ if __name__ == "__main__":
         "https://dagshub.com/kynnemall/Dublin-property-prices.mlflow"
     )
 
+    # no need to start or end logging
+    mlflow.sklearn.autolog()
+
     # %% one-hot encode step for postcodes and property types
     columns_to_encode = ["postcode", "property_type"]
     onehot_step = ColumnTransformer(
@@ -109,42 +112,33 @@ if __name__ == "__main__":
         BayesianRidge(),
     )
     names = (
-        "Ridge with CV",
+        "Ridge Regression with CV",
         "Decision Tree",
         "Random Forest",
-        "Bayesian Ridge",
+        "Bayesian Ridge Regression",
     )
 
     # prepare train and test datasets
     X_train, X_test, y_train, y_test = prepare_data()
     for clf, name in zip(clfs, names):
-        with mlflow.start_run():
-            model = Pipeline([
-                ('onehot-preprocessor', onehot_step),
-                ('scale-continuous', scale_step),
-                ('clf', clf),
-            ])
+        model = Pipeline([
+            ('onehot-preprocessor', onehot_step),
+            ('scale-continuous', scale_step),
+            ('clf', clf),
+        ])
 
-            mlflow.log_param("clf", name)
-            model.fit(X_train, y_train)
-            train_r2 = model.score(X_train, y_train)
-            test_r2 = model.score(X_test, y_test)
-    
-            test_pred = model.predict(X_test)
-            train_pred = model.predict(X_train)
-            test_mae = metrics.mean_absolute_error(y_test, test_pred)
-            train_mae = metrics.mean_absolute_error(y_train, train_pred)
+        model.fit(X_train, y_train)
+        model.score(X_train, y_train)
+        model.score(X_test, y_test)
 
-            mlflow.log_metric("train_r2", train_r2)
-            mlflow.log_metric("test_r2", test_r2)
-            mlflow.log_metric("train_mae", train_mae)
-            mlflow.log_metric("test_mae", test_mae)
+        test_pred = model.predict(X_test)
+        train_pred = model.predict(X_train)
+        test_mse = metrics.mean_squared_error(y_test, test_pred)
+        test_mae = metrics.mean_absolute_error(y_test, test_pred)
+        train_mae = metrics.mean_absolute_error(y_train, train_pred)
 
-            print(f"\n{name}")
-            print(f"Train score:\t{model.score(X_train, y_train):.2f}")
-            print(f"Test score:\t{model.score(X_test, y_test):.2f}")
-            print(f"Train MAE\t{train_mae:.2f}")
-            print(f"Test MAE\t\t{test_mae:.2f}")
-
-            signature = mlflow.models.infer_signature(X_test, model.predict(X_test))
-            mlflow.sklearn.log_model(model, "sk_models", signature=signature, await_registration_for=600)
+        print(f"\n{name}")
+        print(f"Train score:\t{model.score(X_train, y_train):.2f}")
+        print(f"Test score:\t{model.score(X_test, y_test):.2f}")
+        print(f"Train MAE\t{train_mae:.2f}")
+        print(f"Test MAE\t\t{test_mae:.2f}")

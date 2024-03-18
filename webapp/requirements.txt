@@ -1,6 +1,6 @@
 dagshub
 matplotlib
-mlflow
+mlflow==2.9.2
 pandas
 pydeck
 scikit-learn
