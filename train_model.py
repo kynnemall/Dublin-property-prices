@@ -52,11 +52,8 @@ def prepare_data():
     df = pd.concat([pd.read_csv(c) for c in csv_links])
     df.drop_duplicates(subset='url', keep='last', inplace=True)
 
-    # keep properties with postcodes that are present at least 10 times
-    # and have a sales price of maximum €800,000
-    counts = df['postcode'].value_counts()
-    keep_codes = counts[counts >= 10].index
-    df = df[(df['postcode'].isin(keep_codes)) & (df['price'] <= 8e5)]
+    # keep properties with a sales price of maximum €800,000
+    df = df[df['price'] <= 8e5]
 
     # make categoricalencoding of BER
     ordered_ber = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3', 'D1',
@@ -88,9 +85,11 @@ if __name__ == "__main__":
     # %% one-hot encode step for postcodes and property types
     columns_to_encode = ["postcode", "property_type"]
     onehot_step = ColumnTransformer(
-        transformers=[
-            ('onehot', OneHotEncoder(sparse_output=False), columns_to_encode),
-        ], remainder='passthrough'
+        transformers=[(
+            'onehot', OneHotEncoder(
+                sparse_output=False, handle_unknown="infrequent_if_exist",
+                min_frequency=10), columns_to_encode
+        )], remainder='passthrough'
     )
 
     # scale continuous features
