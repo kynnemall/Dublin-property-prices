@@ -8,9 +8,6 @@ Created on Fri Mar  8 16:11:17 2024
 
 import os
 import mlflow
-# no need to start or end logging
-# imported before sklearn to log imported metrics
-mlflow.sklearn.autolog()
 import dagshub
 import logging
 import pandas as pd
@@ -112,33 +109,42 @@ if __name__ == "__main__":
         BayesianRidge(),
     )
     names = (
-        "Ridge Regression with CV",
+        "Ridge with CV",
         "Decision Tree",
         "Random Forest",
-        "Bayesian Ridge Regression",
+        "Bayesian Ridge",
     )
 
     # prepare train and test datasets
     X_train, X_test, y_train, y_test = prepare_data()
     for clf, name in zip(clfs, names):
-        model = Pipeline([
-            ('onehot-preprocessor', onehot_step),
-            ('scale-continuous', scale_step),
-            ('clf', clf),
-        ])
+        with mlflow.start_run():
+            model = Pipeline([
+                ('onehot-preprocessor', onehot_step),
+                ('scale-continuous', scale_step),
+                ('clf', clf),
+            ])
 
-        model.fit(X_train, y_train)
-        model.score(X_train, y_train)
-        model.score(X_test, y_test)
+            mlflow.log_param("clf", name)
+            model.fit(X_train, y_train)
+            train_r2 = model.score(X_train, y_train)
+            test_r2 = model.score(X_test, y_test)
+    
+            test_pred = model.predict(X_test)
+            train_pred = model.predict(X_train)
+            test_mae = metrics.mean_absolute_error(y_test, test_pred)
+            train_mae = metrics.mean_absolute_error(y_train, train_pred)
 
-        test_pred = model.predict(X_test)
-        train_pred = model.predict(X_train)
-        test_mse = metrics.mean_squared_error(y_test, test_pred)
-        test_mae = metrics.mean_absolute_error(y_test, test_pred)
-        train_mae = metrics.mean_absolute_error(y_train, train_pred)
+            mlflow.log_metric("train_r2", train_r2)
+            mlflow.log_metric("test_r2", test_r2)
+            mlflow.log_metric("train_mae", train_mae)
+            mlflow.log_metric("test_mae", test_mae)
 
-        print(f"\n{name}")
-        print(f"Train score:\t{model.score(X_train, y_train):.2f}")
-        print(f"Test score:\t{model.score(X_test, y_test):.2f}")
-        print(f"Train MAE\t{train_mae:.2f}")
-        print(f"Test MAE\t\t{test_mae:.2f}")
+            print(f"\n{name}")
+            print(f"Train score:\t{model.score(X_train, y_train):.2f}")
+            print(f"Test score:\t{model.score(X_test, y_test):.2f}")
+            print(f"Train MAE\t{train_mae:.2f}")
+            print(f"Test MAE\t\t{test_mae:.2f}")
+
+            signature = mlflow.models.infer_signature(X_test, model.predict(X_test))
+            mlflow.sklearn.log_model(model, "sk_models", signature=signature, await_registration_for=600)
