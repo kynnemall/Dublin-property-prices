@@ -17,11 +17,13 @@ def results_containers(listing, col):
     nbath = listing.bathrooms
     price = listing.price
     ber = listing.BER
+    pred = listing.price_pred
+    
     html = f"""
     <div style="text-decoration:none; border: 2px solid lightgray; 
     border-radius: 10px; padding: 5px; margin: 5px;
     "><p><a href={listing.url}>{address}</a>
-    <br>€{price:,.0f}, {ber} BER, {nbed} Bedrooms, {nbath} Bathrooms</p></div>
+    <br>€{price:,.0f} (predicted: €{pred:,.0f})<br>{ber} BER, {nbed} Bedrooms, {nbath} Bathrooms</p></div>
     """
     col.markdown(html, unsafe_allow_html=True)
 
