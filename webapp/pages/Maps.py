@@ -19,7 +19,7 @@ def prepare_mapdata():
     gdf = pd.read_csv('webapp/geodata.csv')
     df = st.session_state["listings"]
     g = df.groupby('postcode')['price'].median()
-    g_pred = df.groupby('postcode')['pred'].median()
+    g_pred = df.groupby('postcode')['price_pred'].median()
 
     # format postcodes for visualization
     codes = []
