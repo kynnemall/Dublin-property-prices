@@ -25,7 +25,7 @@ set_config(transform_output="pandas")
 
 def prepare_data():
     """
-    Load all CSV data, drop duplicates by URL, apply constraints, format 
+    Load all CSV data, drop duplicates by URL, apply constraints, format
     categorical BER and make splits for training and evaluation.
 
     Returns
@@ -48,23 +48,25 @@ def prepare_data():
     dags_df = source.all().dataframe
     csvs_df = dags_df[dags_df["path"].str.endswith("properties.csv")]
     csv_links = csvs_df["dagshub_download_url"].values
-    df = pd.concat([pd.read_csv(c) for c in csv_links])
-    df.drop_duplicates(subset='url', keep='last', inplace=True)
 
-    # keep properties with a sales price of maximum €800,000
-    df = df[df['price'] <= 8e5]
+    # load the 4 most recent weeks of data
+    df = pd.concat([pd.read_csv(c) for c in csv_links[-4:]])
+    df.drop_duplicates(subset='url', keep='last', inplace=True)
+    df.dropna(inplace=True)
+
+    # keep properties with a sales price less than €800,000
+    df = df[(df['price'] <= 8e5)]
 
     # make categoricalencoding of BER
     ordered_ber = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3', 'D1',
                    'D2', 'E1', 'E2', 'F', 'G', 'Exempt']
     df['ber'] = pd.Categorical(df['ber'], categories=ordered_ber)
     df['ber'] = df['ber'].cat.codes
-    df.dropna(inplace=True)
 
     X = df[['bathrooms', 'bedrooms', 'ber', 'postcode', 'property_type']]
     y = df['price']
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, stratify=X['postcode'], random_state=42, test_size=0.2
+        X, y, random_state=42, test_size=0.2
     )
 
     return X_train, X_test, y_train, y_test
@@ -126,8 +128,8 @@ if __name__ == "__main__":
         ])
 
         model.fit(X_train, y_train)
-        model.score(X_train, y_train)
-        model.score(X_test, y_test)
+        train_score = model.score(X_train, y_train)
+        test_score = model.score(X_test, y_test)
 
         test_pred = model.predict(X_test)
         train_pred = model.predict(X_train)
@@ -136,7 +138,7 @@ if __name__ == "__main__":
         train_mae = metrics.mean_absolute_error(y_train, train_pred)
 
         print(f"\n{name}")
-        print(f"Train score:\t{model.score(X_train, y_train):.2f}")
-        print(f"Test score:\t{model.score(X_test, y_test):.2f}")
+        print(f"Train score:\t{train_score:.2f}")
+        print(f"Test score:\t{test_score:.2f}")
         print(f"Train MAE\t{train_mae:.2f}")
         print(f"Test MAE\t\t{test_mae:.2f}")
