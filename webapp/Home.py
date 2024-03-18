@@ -6,6 +6,7 @@ Created on Fri Mar  8 16:23:44 2024
 @author: martin
 """
 
+import mlflow
 import pandas as pd
 import streamlit as st
 from dagshub.auth import add_app_token
@@ -27,18 +28,39 @@ def load_latest_dataset():
     df["url"] = "https://www.property.ie/property-for-sale/" + df["url"]
     df["bathrooms"] = df["bathrooms"].astype(int)
     df["bedrooms"] = df["bedrooms"].astype(int)
+
+    # prepare data for predictions
+    # make categoricalencoding of BER
+    ordered_ber = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3', 'D1',
+                   'D2', 'E1', 'E2', 'F', 'G', 'Exempt']
+    df['BER'] = pd.Categorical(df['ber'], categories=ordered_ber)
+    df['BER'] = df['BER'].cat.codes
+    X = df[['bathrooms', 'bedrooms', 'BER', 'postcode', 'property_type']]
+
+    # get run id for best Bayesian Ridge model
+    runs = mlflow.search_runs()
+    runs = runs[runs["params.clf"].str.contains("Bay")].sort_values()
+    sort_cols = [c for c in runs.columns if "score" in c and "test" in c]
+    runs.sort_values(sort_cols[0], inplace=True, ascending=False)
+    run_id = runs["run_id"].iloc[0]
+
+    # load model and predict scores with Bayesian prediction intervals
+    model = mlflow.sklearn.load_model(f"runs:/{run_id}/model")
+    pred, pred_std = model.predict(X, return_std=True)
+
+    df["price_pred"] = pred
+    df["price_pred_std"] = pred_std
+
     return df, filename
 
 
 st.markdown(
     """
     
-            
     """
 )
-
 
 listings, fname = load_latest_dataset()
 date = fname.split('_')[0]
 st.session_state['listings'] = listings
-st.text(f"Latest property listings acquired on {date}")
+st.markdown(f"Latest property listings acquired on {date}")
