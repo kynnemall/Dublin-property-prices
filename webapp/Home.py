@@ -15,6 +15,10 @@ from dagshub.data_engine import datasources
 
 def load_latest_dataset():
     if "listings" not in st.session_state:
+        mlflow.set_tracking_uri(
+            "https://dagshub.com/kynnemall/Dublin-property-prices.mlflow"
+        )
+
         add_app_token(token=st.secrets["TOKEN"])
         source = datasources.get_datasources(
             'kynnemall/Dublin-property-prices'
@@ -54,7 +58,6 @@ def load_latest_dataset():
 
         st.session_state["listings"] = df
         st.session_state["date"] = filename.split('_')[0]
-
 
 
 st.markdown(
