@@ -16,7 +16,7 @@ def results_containers(listing, col):
     nbed = listing.bedrooms
     nbath = listing.bathrooms
     price = listing.price
-    ber = listing.ber
+    ber = listing.BER
     html = f"""
     <div style="text-decoration:none; border: 2px solid lightgray; 
     border-radius: 10px; padding: 5px; margin: 5px;
@@ -41,7 +41,7 @@ with st.expander("Filter Listings"):
     post_options = sorted(fdf["postcode"].unique())
     post_filter = col1.multiselect("Postcode", post_options)
 
-    ber_options = sorted(fdf["ber"].unique())
+    ber_options = sorted(fdf["BER"].unique())
     ber_filter = col2.multiselect("BER", ber_options)
 
     bed_min, bed_max = fdf["bedrooms"].min(), fdf["bedrooms"].max()
@@ -57,7 +57,7 @@ with st.expander("Filter Listings"):
         (fdf["price"].between(*price_filter, inclusive="both"))
     ])
     if ber_filter:
-        filtered = filtered[filtered["ber"].isin(ber_filter)]
+        filtered = filtered[filtered["BER"].isin(ber_filter)]
 
     if post_filter:
         filtered = filtered[filtered["postcode"].isin(post_filter)]
