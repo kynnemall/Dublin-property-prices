@@ -9,7 +9,6 @@ Created on Fri Mar  8 16:11:17 2024
 import os
 import mlflow
 import dagshub
-import logging
 import pandas as pd
 from sklearn import metrics
 from sklearn import set_config
@@ -60,6 +59,7 @@ def prepare_data():
                    'D2', 'E1', 'E2', 'F', 'G', 'Exempt']
     df['ber'] = pd.Categorical(df['ber'], categories=ordered_ber)
     df['ber'] = df['ber'].cat.codes
+    df.dropna(inplace=True)
 
     X = df[['bathrooms', 'bedrooms', 'ber', 'postcode', 'property_type']]
     y = df['price']
