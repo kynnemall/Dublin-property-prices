@@ -8,6 +8,9 @@ Created on Fri Mar  8 16:11:17 2024
 
 import os
 import mlflow
+# no need to start or end logging
+# imported before sklearn to log imported metrics
+mlflow.sklearn.autolog()
 import dagshub
 import logging
 import pandas as pd
@@ -82,9 +85,6 @@ if __name__ == "__main__":
     mlflow.set_tracking_uri(
         "https://dagshub.com/kynnemall/Dublin-property-prices.mlflow"
     )
-
-    # no need to start or end logging
-    mlflow.sklearn.autolog()
 
     # %% one-hot encode step for postcodes and property types
     columns_to_encode = ["postcode", "property_type"]
