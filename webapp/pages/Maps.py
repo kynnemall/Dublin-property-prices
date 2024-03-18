@@ -19,6 +19,7 @@ def prepare_mapdata():
     gdf = pd.read_csv('webapp/geodata.csv')
     df = st.session_state["listings"]
     g = df.groupby('postcode')['price'].median()
+    g_pred = df.groupby('postcode')['pred'].median()
 
     # format postcodes for visualization
     codes = []
@@ -31,11 +32,13 @@ def prepare_mapdata():
 
     # format price and apply log scale for visualization
     gdf['price'] = g[codes].values
+    gdf['pred'] = g_pred[codes].values
     gdf['log'] = np.log10(gdf['price'])
     gdf['area'] = gdf['postcode'].str.split(',').str[0]
     gdf['scaled_price'] = (gdf['log'] - gdf['log'].min()) / \
         (gdf['log'].max() - gdf['log'].min())
     gdf['price'] = gdf['price'].apply(lambda x: f'€{x:,.0f}')
+    gdf['pred'] = gdf['pred'].apply(lambda x: f'€{x:,.0f}')
 
     # map log-scaled prices to RGBA
     norm = colors.Normalize(vmin=0, vmax=1, clip=True)
@@ -66,8 +69,10 @@ st.pydeck_chart(pdk.Deck(
             auto_highlight=True,
         ),
     ],
-    tooltip={"html": "<b>Area: </b> {area} <br /> "
-             "<b>Median Price: </b> {price} "}
+    tooltip={
+        "html": "<b>Area: </b> {area} <br>"
+        "<b>Median Price: </b> {price} <br>"
+        "<b>Predicted Price: </b> {pred}"}
 ))
 
 # do something similar for st.session_state["filtered"]
