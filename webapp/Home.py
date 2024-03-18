@@ -9,8 +9,10 @@ Created on Fri Mar  8 16:23:44 2024
 import mlflow
 import pandas as pd
 import streamlit as st
+from sklearn import set_config
 from dagshub.auth import add_app_token
 from dagshub.data_engine import datasources
+set_config(transform_output="pandas")
 
 
 def load_latest_dataset():
