@@ -40,7 +40,7 @@ def load_latest_dataset():
         df["BER"] = df["ber"]
         df['ber'] = pd.Categorical(df['ber'], categories=ordered_ber)
         df['ber'] = df['ber'].cat.codes
-        X = df[['bathrooms', 'bedrooms', 'BER', 'postcode', 'property_type']]
+        X = df[['bathrooms', 'bedrooms', 'ber', 'postcode', 'property_type']]
 
         # get run id for best Bayesian Ridge model
         runs = mlflow.search_runs()
