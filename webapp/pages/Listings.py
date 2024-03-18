@@ -77,11 +77,11 @@ with st.expander("Filter Listings"):
     filtered.sort_values(sort_col, ascending=asc, inplace=True)
 
     st.markdown(
-        f"<h5 style='text-align: center'>Total properties: {fdf.shape[0]}</h5>",
+        f"<p style='text-align: center'>Total properties: {fdf.shape[0]}</p>",
         unsafe_allow_html=True
     )
     st.markdown(
-        f"<h5 style='text-align: center'>Remaining properties: {filtered.shape[0]}</h5>",
+        f"<p style='text-align: center'>Remaining properties: {filtered.shape[0]}</p>",
         unsafe_allow_html=True
     )
 
