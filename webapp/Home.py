@@ -37,8 +37,9 @@ def load_latest_dataset():
         # make categoricalencoding of BER
         ordered_ber = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3', 'D1',
                        'D2', 'E1', 'E2', 'F', 'G', 'Exempt']
-        df['BER'] = pd.Categorical(df['ber'], categories=ordered_ber)
-        df['BER'] = df['BER'].cat.codes
+        df["BER"] = df["ber"]
+        df['ber'] = pd.Categorical(df['ber'], categories=ordered_ber)
+        df['ber'] = df['ber'].cat.codes
         X = df[['bathrooms', 'bedrooms', 'BER', 'postcode', 'property_type']]
 
         # get run id for best Bayesian Ridge model
