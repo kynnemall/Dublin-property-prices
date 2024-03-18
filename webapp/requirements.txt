@@ -3,4 +3,4 @@ matplotlib
 mlflow==2.7
 pandas
 pydeck
-scikit-learn
+scikit-learn==1.2.1
