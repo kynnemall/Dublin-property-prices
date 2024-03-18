@@ -39,7 +39,7 @@ def load_latest_dataset():
 
         # get run id for best Bayesian Ridge model
         runs = mlflow.search_runs()
-        print(runs.columns)
+        st.dataframe(runs)
         runs = runs[runs["params.clf"].str.contains("Bay")].sort_values()
         sort_cols = [c for c in runs.columns if "score" in c and "test" in c]
         runs.sort_values(sort_cols[0], inplace=True, ascending=False)
