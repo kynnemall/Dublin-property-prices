@@ -46,7 +46,6 @@ def load_latest_dataset():
 
         # get run id for best Bayesian Ridge model
         runs = mlflow.search_runs()
-        st.dataframe(runs)
         runs = runs[runs["params.clf"].str.contains("Bay")]
         sort_cols = [c for c in runs.columns if "score" in c and "test" in c]
         runs.sort_values(sort_cols[0], inplace=True, ascending=False)
@@ -57,6 +56,7 @@ def load_latest_dataset():
         pred, pred_std = model.predict(X, return_std=True)
 
         df["price_pred"] = pred
+        df['error'] = df['price'] - df['price_pred']
         df["price_pred_std"] = pred_std
 
         st.session_state["listings"] = df
@@ -65,9 +65,10 @@ def load_latest_dataset():
 
 st.markdown(
     """
-    Add some text
+    Want to buy a home but having trouble comparing properties?
+    Then this is the app for you!
     """
 )
 
 load_latest_dataset()
-st.markdown(f"Latest property listings acquired on {st.session_state['date']}")
+st.markdown(f"Property listings last updated on {st.session_state['date']}")

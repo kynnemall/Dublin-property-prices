@@ -55,10 +55,15 @@ with st.expander("Filter Listings"):
     bath_min, bath_max = fdf["bathrooms"].min(), fdf["bathrooms"].max()
     bath_filter = col2.slider("Number of bathrooms", bath_min, bath_max,
                               (bath_min, bath_max), step=1)
+
+    diff_min, diff_max = fdf["error"].min(), fdf["error"].max()
+    diff_filter = col2.slider("Filter by price minus predicted price", diff_min, diff_max,
+                              (diff_min, diff_max), step=1000)
     filtered = (fdf[
         (fdf["bedrooms"].between(*bed_filter, inclusive="both")) &
         (fdf["bathrooms"].between(*bath_filter, inclusive="both")) &
-        (fdf["price"].between(*price_filter, inclusive="both"))
+        (fdf["price"].between(*price_filter, inclusive="both")) &
+        (fdf["error"].between(*diff_filter, inclusive="both"))
     ])
     if ber_filter:
         filtered = filtered[filtered["BER"].isin(ber_filter)]
