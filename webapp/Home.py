@@ -55,7 +55,7 @@ def load_latest_dataset():
         model = mlflow.sklearn.load_model(f"runs:/{run_id}/model")
         pred, pred_std = model.predict(X, return_std=True)
 
-        df["price_pred"] = pred
+        df["price_pred"] = pred.astype(int)
         df['error'] = df['price'] - df['price_pred']
         df["price_pred_std"] = pred_std
 
@@ -66,7 +66,16 @@ def load_latest_dataset():
 st.markdown(
     """
     Want to buy a home but having trouble comparing properties?
+
     Then this is the app for you!
+
+    We have curated property listings and harnessed the power of AI
+    to predict prices and determine if properties are being sold for more
+    than they should be, or if you may have found a bargain!
+
+    Filter Listings interactively to shortlist houses, apartments, and more!
+    
+    
     """
 )
 
