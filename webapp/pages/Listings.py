@@ -17,14 +17,15 @@ def results_containers(listing, col):
     nbath = listing.bathrooms
     price = listing.price
     ber = listing.BER
-    pred = listing.price_pred
+    diff = price - listing.price_pred
+    diff_sign = 'lower' if diff > 0 else 'higher'
     color = 'green' if pred < price else 'red'
     
     html = f"""
     <div style="text-decoration:none; border: 2px solid {color}; 
     border-radius: 10px; padding: 5px; margin: 5px;
     "><p><a href={listing.url}>{address}</a>
-    <br>€{price:,.0f} (predicted: €{pred:,.0f})<br>{ber} BER, {nbed} Bedrooms, {nbath} Bathrooms</p></div>
+    <br>€{price:,.0f} (€{diff:,.0f} {diff_sign} than predicted)<br>{ber} BER, {nbed} Bedrooms, {nbath} Bathrooms</p></div>
     """
     col.markdown(html, unsafe_allow_html=True)
 
