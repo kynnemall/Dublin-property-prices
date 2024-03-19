@@ -19,7 +19,7 @@ def results_containers(listing, col):
     ber = listing.BER
     diff = price - listing.price_pred
     diff_sign = 'lower' if diff > 0 else 'higher'
-    color = 'green' if pred < price else 'red'
+    color = 'green' if listing.price_pred < price else 'red'
     
     html = f"""
     <div style="text-decoration:none; border: 2px solid {color}; 
