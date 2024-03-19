@@ -18,9 +18,10 @@ def results_containers(listing, col):
     price = listing.price
     ber = listing.BER
     pred = listing.price_pred
+    color = 'green' if pred < price else 'red'
     
     html = f"""
-    <div style="text-decoration:none; border: 2px solid lightgray; 
+    <div style="text-decoration:none; border: 2px solid {color}; 
     border-radius: 10px; padding: 5px; margin: 5px;
     "><p><a href={listing.url}>{address}</a>
     <br>€{price:,.0f} (predicted: €{pred:,.0f})<br>{ber} BER, {nbed} Bedrooms, {nbath} Bathrooms</p></div>
